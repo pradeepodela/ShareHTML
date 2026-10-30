@@ -1,0 +1,9 @@
+node_modules/
+
+# Contains the admin passcode (ADMIN_KEY) — keep local only.
+app-config.json
+
+# Catalyst local state
+.catalyst/
+*.log
+.DS_Store

@@ -1,0 +1,13 @@
+{
+  "name": "sharehtml",
+  "version": "1.0.0",
+  "description": "Paste or drop HTML and share it with a link you control.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "zcatalyst-sdk-node": "^3.4.0"
+  }
+}

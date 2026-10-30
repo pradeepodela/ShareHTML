@@ -1,0 +1,12 @@
+{
+	"command": "node app.js",
+	"build_path": ".",
+	"stack": "node24",
+	"memory": 256,
+	"env_variables": {
+		"BUCKET_NAME": "sharehtml-<your-project-id>",
+		"ADMIN_KEY": "change-me"
+	},
+	"catalyst_auth": false,
+	"scripts": {}
+}

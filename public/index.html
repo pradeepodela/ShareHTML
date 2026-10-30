@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ShareHTML</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#f5f6fb; --surface:#ffffff; --surface-2:#f0f1f8;
+  --fg:#191b2e; --muted:#636690; --line:#e4e6f1;
+  --accent:#5546e8; --accent-fg:#ffffff; --accent-soft:#ece9ff;
+  --live:#0c9a67; --off:#b4600a; --danger:#d3303c;
+  --font:"Hanken Grotesk",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --radius:14px; --shadow:0 1px 2px rgba(25,27,46,.04),0 8px 28px -14px rgba(25,27,46,.18);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0e0f1e; --surface:#191a30; --surface-2:#202142;
+  --fg:#e9eaf7; --muted:#9a9cc6; --line:#2b2d4c;
+  --accent:#8f82ff; --accent-fg:#13142a; --accent-soft:#242552;
+  --live:#2fcf90; --off:#f0a641; --danger:#ff6b74;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6);
+  color-scheme:dark;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+button{font:inherit;cursor:pointer}
+a{color:var(--accent)}
+::selection{background:var(--accent-soft)}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+.wrap{max-width:720px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 64px}
+
+.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.brand{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+.logo{width:26px;height:26px;border-radius:7px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-size:13px;font-weight:700;font-family:var(--mono)}
+.tag{font-size:.82rem;color:var(--muted)}
+.lede{color:var(--muted);font-size:.95rem;margin:2px 0 22px}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:26px}
+.panel h2{font-size:1.02rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.panel h2 .mode{font-size:.72rem;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:999px;letter-spacing:.02em;text-transform:uppercase}
+.sub{color:var(--muted);font-size:.85rem;margin-top:3px}
+.field{margin-top:13px}
+.field label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;margin-bottom:6px}
+.inp{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--fg);padding:10px 12px;font-family:var(--font);font-size:.95rem}
+.ta{min-height:168px;resize:vertical;font-family:var(--mono);font-size:.84rem;line-height:1.55;tab-size:2}
+.drop{margin-top:7px;border:1.5px dashed var(--line);border-radius:10px;padding:14px;text-align:center;color:var(--muted);font-size:.86rem;transition:border-color .15s,background .15s}
+.drop.hot{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.drop b{color:var(--fg);font-weight:600}
+.drop label{cursor:pointer;color:var(--accent);font-weight:600;text-decoration:underline}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:9px 15px;border-radius:9px;font-weight:600;font-size:.9rem;display:inline-flex;align-items:center;gap:7px;transition:transform .08s,background .15s,border-color .15s;text-decoration:none}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted);padding-inline:8px}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.note{border-radius:10px;padding:11px 13px;font-size:.85rem;margin-bottom:22px;display:flex;gap:9px;line-height:1.45}
+.note.info{background:var(--accent-soft);color:var(--fg)}
+.note.warn{background:color-mix(in srgb,var(--off) 16%,transparent);color:var(--fg)}
+.note b{font-weight:600}
+
+.lhead{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 12px}
+.lhead h2{font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.counts{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.cards{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:15px 16px}
+.card.off{opacity:.72}
+.card.fresh{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft),var(--shadow)}
+.crow{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+.ctitle{font-weight:600;font-size:1rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{font-size:.7rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.pill.live{color:var(--live);background:color-mix(in srgb,var(--live) 14%,transparent)}
+.pill.off{color:var(--off);background:color-mix(in srgb,var(--off) 16%,transparent)}
+.pill.ver{color:var(--accent);background:var(--accent-soft)}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.meta{color:var(--muted);font-size:.78rem;margin-top:3px}
+.urlrow{display:flex;align-items:center;gap:8px;margin-top:11px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:7px 8px 7px 11px;min-width:0}
+.url{font-family:var(--mono);font-size:.78rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.mini{border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:5px 10px;border-radius:7px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.mini:active{transform:translateY(1px)}
+.mini.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.cfoot{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.cfoot .spacer{flex:1}
+.empty{text-align:center;color:var(--muted);padding:34px 16px;border:1.5px dashed var(--line);border-radius:var(--radius)}
+.loading{text-align:center;color:var(--muted);padding:50px 16px}
+
+/* versions panel */
+.vpanel{margin-top:13px;border-top:1px dashed var(--line);padding-top:13px}
+.vtop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.vtop .txt{font-size:.82rem;color:var(--muted);max-width:44ch}
+.vtop .txt b{color:var(--fg)}
+.switch{position:relative;display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:.84rem;font-weight:600;white-space:nowrap}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.track{width:38px;height:22px;border-radius:999px;background:var(--line);position:relative;transition:background .15s;flex:none}
+.track::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .15s}
+.switch input:checked + .track{background:var(--accent)}
+.switch input:checked + .track::after{transform:translateX(16px)}
+.vlist{display:flex;flex-direction:column;gap:8px}
+.vrow{display:flex;align-items:center;gap:9px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;flex-wrap:wrap}
+.vrow.islive{border-color:color-mix(in srgb,var(--live) 50%,var(--line))}
+.vmain{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.vname{font-weight:600;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vlive{font-size:.64rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--live);background:color-mix(in srgb,var(--live) 14%,transparent);padding:2px 7px;border-radius:999px}
+.vmeta{color:var(--muted);font-size:.74rem;font-family:var(--mono)}
+.vacts{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.vadd{margin-top:10px}
+
+/* passcode gate */
+.gate{min-height:70vh;display:grid;place-items:center}
+.gate .box{width:100%;max-width:340px;text-align:center}
+.gate .mk{width:46px;height:46px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;margin:0 auto 14px;font-size:20px;font-family:var(--mono);font-weight:700}
+.gate h2{font-size:1.2rem;margin-bottom:6px}
+.gate p{color:var(--muted);font-size:.9rem;margin-bottom:16px}
+.gate .err{color:var(--danger);font-size:.82rem;min-height:1.1em;margin-top:8px}
+
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.86rem;font-weight:600;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="view"><div class="loading">Loading&#8230;</div></div>
+<div id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var view = document.getElementById('view');
+  var KEY_STORE = 'sharehtml_key';
+  var adminKey = '';
+  try { adminKey = localStorage.getItem(KEY_STORE) || ''; } catch(e){}
+  var authRequired = true;
+  var bucketReady = true;
+
+  // composer mode:  null | {kind:'replace',page} | {kind:'vedit',page,version} | {kind:'vadd',page}
+  var composerMode = null;
+  var confirmId = null;      // page-delete confirm
+  var vConfirm = null;       // "pageId:vid" version-delete confirm
+  var openVersions = null;   // pageId whose versions panel is expanded
+  var freshId = null;        // page to flash after create/replace
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function shareUrl(id){ return location.origin + '/p/' + id; }
+  function versionUrl(id, vid){ return shareUrl(id) + '?v=' + encodeURIComponent(vid); }
+  function fmtDate(iso){ try { return new Date(iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return ''; } }
+
+  var toastEl = document.getElementById('toast'), toastT;
+  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove('show'); }, 2200); }
+
+  function copyText(txt, label){
+    function done(){ toast((label||'Link') + ' copied'); }
+    function fallback(){ try { var ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); } catch(e){ toast('Press Ctrl/Cmd+C to copy'); } }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fallback);
+    else fallback();
+  }
+
+  function api(method, pathName, body){
+    var opts = { method: method, headers: {} };
+    if (adminKey) opts.headers['x-admin-key'] = adminKey;
+    if (body !== undefined) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+    return fetch(pathName, opts).then(function(r){
+      if (r.status === 401) { var e = new Error('unauthorized'); e.status = 401; throw e; }
+      return r.json().then(function(j){ if (!r.ok) { var er = new Error(j.error || ('HTTP ' + r.status)); er.status = r.status; throw er; } return j; });
+    });
+  }
+
+  // ---- passcode gate ----
+  function renderGate(err){
+    view.innerHTML =
+      '<div class="gate"><div class="box">' +
+        '<div class="mk">&lt;/&gt;</div>' +
+        '<h2>ShareHTML</h2>' +
+        '<p>Enter the admin passcode to manage your shared pages.</p>' +
+        '<input id="g-key" class="inp" type="password" placeholder="Passcode" autocomplete="current-password">' +
+        '<div class="err" id="g-err">' + (err || '') + '</div>' +
+        '<div class="actions" style="justify-content:center;margin-top:12px"><button class="btn primary" id="g-go">Unlock</button></div>' +
+      '</div></div>';
+    var inp = document.getElementById('g-key');
+    function submit(){
+      adminKey = inp.value.trim();
+      try { localStorage.setItem(KEY_STORE, adminKey); } catch(e){}
+      load();
+    }
+    document.getElementById('g-go').addEventListener('click', submit);
+    inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
+    inp.focus();
+  }
+
+  // ---- manager shell ----
+  function managerShell(){
+    view.innerHTML =
+      '<div class="top"><div class="brand"><span class="logo">&lt;/&gt;</span>ShareHTML</div>' +
+        '<span class="tag">paste HTML &rarr; get a shareable link</span></div>' +
+      '<p class="lede">Each page lives on your Catalyst project. Turn it off, swap the HTML, keep multiple versions on one link, or delete it anytime — the link stays the same until you delete.</p>' +
+      (bucketReady ? '' :
+        '<div class="note warn"><span>&#9888;</span><span><b>Storage not ready.</b> The Stratus bucket <code>' + esc(window.__BUCKET || '') + '</code> doesn’t exist yet. Create it in the Catalyst console (Stratus &rarr; Create Bucket), then reload.</span></div>') +
+      '<div class="note info"><span>&#128274;</span><span>Anyone with a page’s link can view it — no sign-in needed. Shared pages run sandboxed. Turn <b>Allow versioning</b> on to let viewers switch versions from the link.</span></div>' +
+      '<div id="composer"></div>' +
+      '<div class="lhead"><h2>Your pages</h2><span class="counts" id="counts"></span></div>' +
+      '<div id="list" class="cards"><div class="loading">Loading…</div></div>';
+    renderComposer();
+  }
+
+  // ---- composer ----
+  function renderComposer(){
+    var c = document.getElementById('composer');
+    if (!c) return;
+    var m = composerMode;
+    var titleVal = '', htmlVal = '', labelVal = '', heading, tagLabel = '', saveLabel, showTitle = true, showLabel = false;
+
+    if (!m){ heading = 'New shared page'; saveLabel = 'Create &amp; get link'; }
+    else if (m.kind === 'replace'){ heading = 'Replace live HTML'; tagLabel='editing'; saveLabel='Save replacement'; titleVal=m.page.title; htmlVal=(liveVer(m.page)||{}).html||''; }
+    else if (m.kind === 'vedit'){ heading='Edit version'; tagLabel='editing'; saveLabel='Save version'; showTitle=false; showLabel=true; labelVal=m.version.label; htmlVal=m.version.html||''; }
+    else if (m.kind === 'vadd'){ heading='Add a version'; tagLabel='new version'; saveLabel='Add version'; showTitle=false; showLabel=true; labelVal=''; }
+
+    var ctx = m ? '<p class="sub">Page: <b>' + esc(m.page.title||'Untitled page') + '</b></p>' : '';
+
+    c.innerHTML =
+      '<div class="panel">' +
+        '<h2>' + heading + (tagLabel ? ' <span class="mode">' + tagLabel + '</span>' : '') + '</h2>' + ctx +
+        (showTitle ? ('<div class="field"><label for="c-title">Title</label>' +
+          '<input id="c-title" class="inp" placeholder="e.g. Landing page draft" value="' + esc(titleVal) + '"></div>') : '') +
+        (showLabel ? ('<div class="field"><label for="c-label">Version name</label>' +
+          '<input id="c-label" class="inp" placeholder="e.g. Blue hero, Oct draft, v2" value="' + esc(labelVal) + '"></div>') : '') +
+        '<div class="field"><label for="c-html">HTML</label>' +
+          '<textarea id="c-html" class="inp ta" placeholder="Paste your HTML here…">' + esc(htmlVal) + '</textarea>' +
+          '<div class="drop" id="drop"><b>Drop an .html file here</b> or <label for="c-file">choose a file</label>' +
+            '<input id="c-file" type="file" accept=".html,.htm,text/html" hidden></div>' +
+        '</div>' +
+        '<div class="actions">' +
+          '<button class="btn primary" id="c-save">' + saveLabel + '</button>' +
+          (m ? '<button class="btn ghost" id="c-cancel">Cancel</button>' : '') +
+          '<button class="btn ghost" id="c-clear">Clear</button>' +
+        '</div>' +
+      '</div>';
+    wireComposer();
+  }
+
+  function wireComposer(){
+    var drop = document.getElementById('drop');
+    var file = document.getElementById('c-file');
+    var ta = document.getElementById('c-html');
+    var titleInp = document.getElementById('c-title');
+    document.getElementById('c-save').addEventListener('click', saveComposer);
+    document.getElementById('c-clear').addEventListener('click', function(){ ta.value=''; if(titleInp) titleInp.value=''; var l=document.getElementById('c-label'); if(l) l.value=''; });
+    var cancel = document.getElementById('c-cancel');
+    if (cancel) cancel.addEventListener('click', function(){ composerMode=null; renderComposer(); });
+    file.addEventListener('change', function(){ if (file.files && file.files[0]) readFile(file.files[0], ta, titleInp); });
+    ['dragenter','dragover'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('hot'); }); });
+    ['dragleave','dragend','drop'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('hot'); }); });
+    drop.addEventListener('drop', function(e){ if (e.dataTransfer && e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0], ta, titleInp); });
+    ta.addEventListener('drop', function(e){ if (e.dataTransfer && e.dataTransfer.files[0]) { e.preventDefault(); readFile(e.dataTransfer.files[0], ta, titleInp); } });
+  }
+
+  function readFile(f, ta, titleInp){
+    var r = new FileReader();
+    r.onload = function(){
+      ta.value = String(r.result || '');
+      var guess = f.name.replace(/\.[^.]+$/,'').replace(/[-_]+/g,' ').trim();
+      if (titleInp && !titleInp.value.trim()) titleInp.value = guess;
+      var l = document.getElementById('c-label'); if (l && !l.value.trim()) l.value = guess;
+      toast('Loaded ' + f.name);
+    };
+    r.onerror = function(){ toast('Could not read that file'); };
+    r.readAsText(f);
+  }
+
+  function saveComposer(){
+    var m = composerMode;
+    var html = document.getElementById('c-html').value;
+    if (!html.trim()) { toast('Add some HTML first'); return; }
+    var titleEl = document.getElementById('c-title');
+    var labelEl = document.getElementById('c-label');
+    var title = titleEl ? titleEl.value.trim() : '';
+    var label = labelEl ? labelEl.value.trim() : '';
+    var btn = document.getElementById('c-save'); btn.disabled = true;
+    var done = function(){ btn.disabled = false; };
+
+    if (!m){
+      api('POST','/api/pages',{ html:html, title:title })
+        .then(function(res){ freshId=res.page.id; composerMode=null; toast('Page created'); copyText(shareUrl(res.page.id)); renderComposer(); refreshList(); })
+        .catch(handleErr).then(done);
+    } else if (m.kind === 'replace'){
+      api('PUT','/api/pages/'+m.page.id,{ html:html, title:title })
+        .then(function(){ freshId=m.page.id; composerMode=null; toast('Live HTML replaced'); renderComposer(); refreshList(); })
+        .catch(handleErr).then(done);
+    } else if (m.kind === 'vedit'){
+      api('PUT','/api/pages/'+m.page.id+'/versions/'+m.version.vid,{ html:html, label:label })
+        .then(function(){ freshId=m.page.id; composerMode=null; toast('Version saved'); renderComposer(); refreshList(); })
+        .catch(handleErr).then(done);
+    } else if (m.kind === 'vadd'){
+      api('POST','/api/pages/'+m.page.id+'/versions',{ html:html, label:label, enableVersioning:true })
+        .then(function(res){ freshId=m.page.id; composerMode=null; openVersions=m.page.id; toast('Version added'); copyText(versionUrl(m.page.id,res.vid),'Version link'); renderComposer(); refreshList(); })
+        .catch(handleErr).then(done);
+    }
+  }
+
+  function scrollComposer(){ var c=document.getElementById('composer'); if(c&&c.scrollIntoView) c.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+  // ---- list ----
+  function refreshList(){
+    api('GET','/api/pages').then(function(res){ pagesCache = res.pages||[]; renderList(); }).catch(handleErr);
+  }
+
+  var pagesCache = [];
+  function pageById(id){ for (var i=0;i<pagesCache.length;i++) if (pagesCache[i].id===id) return pagesCache[i]; return null; }
+  function liveVer(p){ var vs=p.versions||[]; for (var i=0;i<vs.length;i++) if (vs[i].vid===p.live) return vs[i]; return vs[0]||null; }
+
+  function renderList(){
+    var pages = pagesCache;
+    var list = document.getElementById('list');
+    var counts = document.getElementById('counts');
+    if (!list) return;
+    if (!pages.length){ list.innerHTML = '<div class="empty">No pages yet. Paste some HTML above to create your first shareable link.</div>'; if (counts) counts.textContent=''; return; }
+    var live = pages.filter(function(p){ return !p.disabled; }).length;
+    if (counts) counts.textContent = live + ' live · ' + pages.length + ' total';
+    var ordered = pages.slice().reverse();
+    list.innerHTML = ordered.map(cardHtml).join('');
+  }
+
+  function cardHtml(p){
+    var vcount = (p.versions||[]).length;
+    var expanded = (openVersions === p.id);
+    var verPill = p.versioning
+      ? '<span class="pill ver"><span class="dot"></span>Versioning</span>'
+      : '';
+    return '<div class="card' + (p.disabled?' off':'') + (freshId===p.id?' fresh':'') + '">' +
+      '<div class="crow"><span class="ctitle">' + esc(p.title || 'Untitled page') + '</span>' +
+        '<span class="pill ' + (p.disabled?'off':'live') + '"><span class="dot"></span>' + (p.disabled?'Off':'Live') + '</span>' +
+        verPill + '</div>' +
+      '<div class="meta">Created ' + esc(fmtDate(p.created)) + (p.updated ? ' · updated ' + esc(fmtDate(p.updated)) : '') +
+        ' · ' + vcount + ' version' + (vcount===1?'':'s') + '</div>' +
+      '<div class="urlrow"><span class="url">' + esc(shareUrl(p.id)) + '</span>' +
+        '<button class="mini" data-act="copy" data-id="' + p.id + '">Copy</button></div>' +
+      '<div class="cfoot">' +
+        '<a class="btn" href="' + esc(shareUrl(p.id)) + '" target="_blank" rel="noopener">Open</a>' +
+        '<button class="btn" data-act="replace" data-id="' + p.id + '">Replace HTML</button>' +
+        '<button class="btn' + (expanded?' ':'') + '" data-act="versions" data-id="' + p.id + '">Versions (' + vcount + ') ' + (expanded?'&#9650;':'&#9660;') + '</button>' +
+        '<button class="btn" data-act="toggle" data-id="' + p.id + '" data-off="' + (p.disabled?'1':'0') + '">' + (p.disabled?'Turn on':'Turn off') + '</button>' +
+        '<span class="spacer"></span>' +
+        (confirmId===p.id
+          ? '<button class="btn danger" data-act="del" data-id="' + p.id + '">Confirm delete</button><button class="btn ghost" data-act="del-cancel">Keep</button>'
+          : '<button class="btn ghost danger" data-act="del-ask" data-id="' + p.id + '">Delete</button>') +
+      '</div>' +
+      (expanded ? versionsPanel(p) : '') +
+    '</div>';
+  }
+
+  function versionsPanel(p){
+    var rows = (p.versions||[]).map(function(v){
+      var isLive = (v.vid === p.live);
+      var delConf = (vConfirm === p.id + ':' + v.vid);
+      return '<div class="vrow' + (isLive?' islive':'') + '">' +
+        '<div class="vmain">' +
+          '<span class="vname">' + esc(v.label) + '</span>' +
+          (isLive ? '<span class="vlive">live</span>' : '') +
+          '<span class="vmeta">?v=' + esc(v.vid) + '</span>' +
+        '</div>' +
+        '<div class="vacts">' +
+          '<a class="mini" href="' + esc(versionUrl(p.id,v.vid)) + '" target="_blank" rel="noopener">Open</a>' +
+          '<button class="mini" data-act="vcopy" data-id="' + p.id + '" data-vid="' + v.vid + '">Copy link</button>' +
+          (isLive ? '' : '<button class="mini" data-act="vlive" data-id="' + p.id + '" data-vid="' + v.vid + '">Set live</button>') +
+          '<button class="mini" data-act="vedit" data-id="' + p.id + '" data-vid="' + v.vid + '">Edit</button>' +
+          (delConf
+            ? '<button class="mini" style="color:var(--danger);border-color:var(--danger)" data-act="vdel" data-id="' + p.id + '" data-vid="' + v.vid + '">Confirm</button><button class="mini" data-act="vdel-cancel">Keep</button>'
+            : ((p.versions.length>1) ? '<button class="mini" data-act="vdel-ask" data-id="' + p.id + '" data-vid="' + v.vid + '">Delete</button>' : '')) +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    return '<div class="vpanel">' +
+      '<div class="vtop">' +
+        '<div class="txt"><b>Allow versioning</b><br>When on, a small switcher appears on your public link so viewers can flip between versions. A <code>?v=</code> link always opens one exact version.</div>' +
+        '<label class="switch"><input type="checkbox" data-act="vtoggle" data-id="' + p.id + '"' + (p.versioning?' checked':'') + '><span class="track"></span><span>' + (p.versioning?'On':'Off') + '</span></label>' +
+      '</div>' +
+      '<div class="vlist">' + rows + '</div>' +
+      '<div class="vadd"><button class="btn" data-act="vadd" data-id="' + p.id + '">+ Add version</button></div>' +
+    '</div>';
+  }
+
+  // delegated clicks
+  view.addEventListener('click', function(e){
+    var el = e.target.closest('[data-act]'); if (!el) return;
+    var act = el.getAttribute('data-act'), id = el.getAttribute('data-id'), vid = el.getAttribute('data-vid');
+
+    if (act === 'copy') return copyText(shareUrl(id));
+    if (act === 'vcopy') return copyText(versionUrl(id,vid),'Version link');
+
+    if (act === 'versions'){ openVersions = (openVersions===id? null : id); vConfirm=null; renderList(); return; }
+
+    if (act === 'del-ask'){ confirmId = id; renderList(); return; }
+    if (act === 'del-cancel'){ confirmId = null; renderList(); return; }
+    if (act === 'del'){ confirmId = null; api('DELETE','/api/pages/'+id).then(function(){ toast('Page deleted'); if(composerMode&&composerMode.page&&composerMode.page.id===id){composerMode=null;renderComposer();} if(openVersions===id) openVersions=null; refreshList(); }).catch(handleErr); return; }
+
+    if (act === 'toggle'){ var off = el.getAttribute('data-off')==='1'; api('PUT','/api/pages/'+id,{disabled:!off}).then(refreshList).catch(handleErr); return; }
+
+    if (act === 'replace'){
+      api('GET','/api/pages/'+id).then(function(res){ composerMode={kind:'replace',page:res.page}; confirmId=null; renderComposer(); scrollComposer(); }).catch(handleErr);
+      return;
+    }
+
+    // versioning controls
+    if (act === 'vadd'){
+      var p = pageById(id); if(!p) return;
+      composerMode={kind:'vadd',page:p}; renderComposer(); scrollComposer(); return;
+    }
+    if (act === 'vlive'){ api('PUT','/api/pages/'+id,{live:vid}).then(function(){ toast('Live version changed'); refreshList(); }).catch(handleErr); return; }
+    if (act === 'vedit'){
+      api('GET','/api/pages/'+id+'/versions/'+vid).then(function(res){ composerMode={kind:'vedit',page:pageById(id),version:res.version}; renderComposer(); scrollComposer(); }).catch(handleErr);
+      return;
+    }
+    if (act === 'vdel-ask'){ vConfirm = id+':'+vid; renderList(); return; }
+    if (act === 'vdel-cancel'){ vConfirm = null; renderList(); return; }
+    if (act === 'vdel'){ vConfirm=null; api('DELETE','/api/pages/'+id+'/versions/'+vid).then(function(){ toast('Version deleted'); refreshList(); }).catch(handleErr); return; }
+  });
+
+  // toggle switch (change event)
+  view.addEventListener('change', function(e){
+    var el = e.target.closest('[data-act="vtoggle"]'); if (!el) return;
+    var id = el.getAttribute('data-id'); var on = el.checked;
+    api('PUT','/api/pages/'+id,{versioning:on}).then(function(){ toast(on?'Versioning on':'Versioning off'); refreshList(); }).catch(function(err){ el.checked=!on; handleErr(err); });
+  });
+
+  function handleErr(err){
+    if (err && err.status === 401){ adminKey=''; try{localStorage.removeItem(KEY_STORE);}catch(e){} renderGate('That passcode didn’t work.'); return; }
+    toast((err && err.message) || 'Something went wrong');
+  }
+
+  // ---- boot ----
+  function load(){
+    view.innerHTML = '<div class="loading">Loading…</div>';
+    fetch('/api/status').then(function(r){ return r.json(); }).then(function(s){
+      authRequired = !!s.authRequired; bucketReady = !!s.bucketReady; window.__BUCKET = s.bucket;
+      if (authRequired && !adminKey){ renderGate(''); return; }
+      managerShell();
+      return api('GET','/api/pages').then(function(res){ pagesCache = res.pages||[]; renderList(); }).catch(function(err){
+        if (err && err.status === 401){ adminKey=''; try{localStorage.removeItem(KEY_STORE);}catch(e){} renderGate('That passcode didn’t work.'); return; }
+        var list = document.getElementById('list');
+        if (list) list.innerHTML = '<div class="empty">' + (bucketReady
+          ? 'Could not load your pages. Please reload in a moment.'
+          : 'Storage isn’t ready yet — create the Stratus bucket shown in the banner above, then reload.') + '</div>';
+      });
+    }).catch(function(){
+      view.innerHTML = '<div class="empty">Could not reach the server. Please reload.</div>';
+    });
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>
